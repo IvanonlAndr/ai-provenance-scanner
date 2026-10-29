@@ -1,0 +1,2 @@
+user = input()
+eval(user)
