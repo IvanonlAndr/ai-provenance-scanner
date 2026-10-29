@@ -5,7 +5,7 @@ A small CLI that answers two questions about AI-assisted code in a pull request:
 1. **Which commits were written with AI?** (recorded at commit time, not guessed afterward)
 2. **Is that code safe?** (vulnerable patterns and hallucinated dependencies)
 
-![demo output](docs/demo.png)
+![Scanner output showing a flagged eval() call and a hallucinated package](docs/demo.png)
 
 ## Why this approach
 
@@ -25,7 +25,7 @@ Detecting AI-written code after the fact is unreliable. Classifiers are noisy an
 Requires Python 3.9+ and git 2.32+ (for `--trailer`).
 
 ```bash
-git clone https://github.com/IvanonlAndr/ai-provenance-scanner.git
+git clone https://github.com/<your-username>/ai-provenance-scanner.git
 cd ai-provenance-scanner
 python -m venv .venv
 
@@ -74,15 +74,27 @@ Commits without the trailer are ignored. Exit code is `0` when clean and `1` whe
 
 ## Try it yourself
 
+The repo includes two deliberately flawed demo fixtures in `tests/fixtures/`: `app.py` (calls `eval()` on user input) and `requirements.txt` (lists a package that doesn't exist on PyPI). They are not real code. To see the scanner catch them, recreate them in a new commit that carries the trailer:
+
 ```bash
 git checkout -b test-ai
-echo "user = input()
-eval(user)" > app.py
-printf "requests\nflask-secure-auth-helper-9000\n" > requirements.txt
-git add app.py requirements.txt
+mkdir -p tests/fixtures
+printf "user = input()\neval(user)\n" > tests/fixtures/app.py
+printf "requests\nflask-secure-auth-helper-9000\n" > tests/fixtures/requirements.txt
+git add tests/fixtures
 git commit -m "Add login handler" --trailer "AI-Assisted: claude"
 python scanner.py main
 ```
+
+On Windows PowerShell, use these instead of the `mkdir -p` and `printf` lines:
+
+```powershell
+mkdir tests\fixtures
+Set-Content tests\fixtures\app.py "user = input()`neval(user)"
+Set-Content tests\fixtures\requirements.txt "requests`nflask-secure-auth-helper-9000"
+```
+
+If the fixtures are already in your checkout, change one of them (for example, add a comment line) and commit that change with the trailer.
 
 ## Run it in CI
 
