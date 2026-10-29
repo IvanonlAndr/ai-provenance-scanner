@@ -4,7 +4,18 @@ import requests
 import os
 
 def sh(*args):
-    return subprocess.run(args, capture_output=True, text=True).stdout
+    r = subprocess.run(args, capture_output=True, text=True)
+    if r.returncode != 0:
+        print(f"command error: {r.stderr.strip()}", file=sys.stderr)
+    return r.stdout
+
+def default_base():
+    for ref in ("origin/main", "origin/master", "main", "master"):
+        r = subprocess.run(["git", "rev-parse", "--verify", "--quiet", ref],
+                           capture_output=True, text=True)
+        if r.returncode == 0:
+            return ref
+    return None
 
 def ai_commits(base):
     fmt = "%H%x1f%(trailers:key=AI-Assisted,valueonly,unfold)%x1e"
@@ -13,10 +24,11 @@ def ai_commits(base):
     for rec in out.split("\x1e"):
         if "\x1f" not in rec:
             continue
-        sha, tool = rec.strip().split("\x1f")
-        if tool.strip():
+        sha, tool = rec.split("\x1f", 1)
+        sha, tool = sha.strip(), tool.strip()
+        if tool:
             files = sh("git", "show", "--name-only", "--format=", sha).split()
-            commits.append({"sha": sha[:8], "tool": tool.strip(), "files": files})
+            commits.append({"sha": sha[:8], "tool": tool, "files": files})
     return commits
 
 def semgrep_scan(files):
@@ -57,7 +69,16 @@ def dependency_findings(files):
                         issues.append({"file": f, "msg": issue})
     return issues
 
-def main(base="origin/main"):
+def main(base=None):
+    base = base or default_base()
+    if not base:
+        print("Couldn't find a base branch. Pass one: python scanner.py <branch>")
+        sys.exit(2)
+    check = subprocess.run(["git", "rev-parse", "--verify", base],
+                           capture_output=True, text=True)
+    if check.returncode != 0:
+        print(f"Base ref '{base}' not found.")
+        sys.exit(2)
     commits = ai_commits(base)
     total = 0
     for c in commits:
@@ -70,4 +91,4 @@ def main(base="origin/main"):
     sys.exit(1 if total else 0)
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "origin/main")
+    main(sys.argv[1] if len(sys.argv) > 1 else None)
