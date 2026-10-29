@@ -62,8 +62,11 @@ def dependency_findings(files):
     for f in files:
         if f.endswith("requirements.txt") and os.path.exists(f):
             for line in open(f):
-                m = re.match(r"^([A-Za-z0-9_.-]+)", line.strip())
-                if m and not line.startswith("#"):
+                line = line.strip()
+                if not line or line.startswith(("#", "-")):
+                    continue
+                m = re.match(r"^([A-Za-z0-9_.-]+)", line)
+                if m:
                     issue = check_package(m.group(1))
                     if issue:
                         issues.append({"file": f, "msg": issue})
