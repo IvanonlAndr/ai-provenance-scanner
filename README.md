@@ -126,6 +126,7 @@ Being upfront about what this does **not** do:
 - **Python/PyPI only.** Dependency checks cover `requirements.txt`. No npm, Go, or lockfile support yet.
 - **Semgrep is not a full security review.** It catches known patterns and misses plenty.
 - **The age check is a heuristic.** New packages can be legitimate, and old ones can be hijacked.
+- - **Reads the working tree, not each commit.** Files are scanned as they exist in your current checkout, so a file renamed or deleted later in the same branch is skipped silently.
 
 ## Roadmap
 
