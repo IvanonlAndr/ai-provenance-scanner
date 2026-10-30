@@ -1,0 +1,79 @@
+                   
+                   
+┌─────────────────┐
+│ 8 Code Findings │
+└─────────────────┘
+                
+    app03\app.py
+    ❯❱ [1mpython.flask.security.audit.render-template-string.render-template-string[0m
+          ❰❰ Blocking ❱❱
+          Found a template created with string formatting. This is susceptible to server-side template
+          injection and cross-site scripting attacks.                                                 
+          Details: https://sg.run/8yjE                                                                
+                                                                                                      
+           35┆ return render_template_string(FORM, message=message)
+            ⋮┆----------------------------------------
+           47┆ return render_template_string(FORM, message=message)
+                
+    app20\app.py
+   ❯❯❱ [1mpython.lang.security.dangerous-subprocess-use.dangerous-subprocess-use[0m
+          ❰❰ Blocking ❱❱
+          Detected subprocess function 'run' with user controlled data. A malicious actor could leverage this
+          to perform command injection. You may consider using 'shlex.escape()'.                             
+          Details: https://sg.run/NWxp                                                                       
+                                                                                                             
+           17┆ result = subprocess.run(ALLOWED[selected], capture_output=True, text=True, timeout=10,
+               shell=False)                                                                          
+   
+    ❯❱ [1mpython.flask.security.audit.render-template-string.render-template-string[0m
+          ❰❰ Blocking ❱❱
+          Found a template created with string formatting. This is susceptible to server-side template
+          injection and cross-site scripting attacks.                                                 
+          Details: https://sg.run/8yjE                                                                
+                                                                                                      
+           21┆     return render_template_string("""
+           22┆ <form method="post">
+           23┆ <select                                                                                  
+               name="command"><option>date</option><option>list</option><option>whoami</option></select>
+           24┆ <button>Run</button></form><pre>{{ output }}</pre>
+           25┆ """, output=output)
+                
+    app21\app.py
+    ❯❱ [1mpython.lang.security.audit.insecure-file-permissions.insecure-file-permissions[0m
+          ❰❰ Blocking ❱❱
+          These permissions `0o755` are widely permissive and grant access to more people than may be       
+          necessary. A good default is `0o644` which gives read and write access to yourself and read access
+          to everyone else.                                                                                 
+          Details: https://sg.run/AXY4                                                                      
+                                                                                                            
+           19┆ os.chmod(args.output, 0o755)
+   
+   ❯❯❱ [1mpython.lang.security.audit.dangerous-subprocess-use-tainted-env-args.dangerous-subprocess-use-tainted-env-args[0m
+          ❰❰ Blocking ❱❱
+          Detected subprocess function 'run' with user controlled data. A malicious actor could leverage this
+          to perform command injection. You may consider using 'shlex.quote()'.                              
+          Details: https://sg.run/pLGg                                                                       
+                                                                                                             
+           20┆ subprocess.run([os.path.abspath(args.output)], check=True)
+                
+    app22\app.py
+    ❯❱ [1mpython.flask.security.audit.render-template-string.render-template-string[0m
+          ❰❰ Blocking ❱❱
+          Found a template created with string formatting. This is susceptible to server-side template
+          injection and cross-site scripting attacks.                                                 
+          Details: https://sg.run/8yjE                                                                
+                                                                                                      
+           20┆ return render_template_string("<form method='post'><input name='term'             
+               value='{{term}}'><button>Search</button></form><pre>{{results}}</pre>", term=term,
+               results=results)                                                                  
+                
+    app24\app.py
+    ❯❱ [1mpython.flask.security.audit.render-template-string.render-template-string[0m
+          ❰❰ Blocking ❱❱
+          Found a template created with string formatting. This is susceptible to server-side template
+          injection and cross-site scripting attacks.                                                 
+          Details: https://sg.run/8yjE                                                                
+                                                                                                      
+           25┆ return render_template_string("<form method='post' enctype='multipart/form-data'><input
+               type='file' name='picture' required><button>Upload</button></form>{% if filename %}<img
+               src='/profiles/{{filename}}'>{% endif %}", filename=filename)                          
