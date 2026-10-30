@@ -7,6 +7,8 @@ A small CLI that answers two questions about AI-assisted code in a pull request:
 
 ![Scanner output showing a flagged eval() call and a hallucinated package](docs/demo.png)
 
+See [RESULTS.md](RESULTS.md) for a 30-app experiment run with this scanner.
+
 ## Why this approach
 
 Detecting AI-written code after the fact is unreliable. Classifiers are noisy and easy to evade. This tool takes a different route: **record provenance at the source** with a git commit trailer, then scan only what the trailer points to. Provenance becomes a workflow problem instead of a detection problem.
