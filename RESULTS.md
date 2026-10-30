@@ -4,9 +4,9 @@ A small experiment to see what the scanner finds in real AI-generated code. This
 
 ## Method
 
-- **Model:** GPT-5 via GitHub Copilot in VS Code
+- **Tool:** GitHub Copilot in VS Code, with automatic model selection. The underlying model was not identified and may have varied between prompts
 - **Prompts:** 30 tasks, each in a fresh chat: web APIs, scripts, bots, data tools, 5 prompts built to invite insecure code (shell commands, downloading and running files, SQL from form input, deserialization, file uploads), and 6 niche-library tasks
-- **Output:** saved unedited, one folder and one commit per app, each tagged with an `AI-Assisted: copilot (gpt-5)` trailer
+- **Output:** saved unedited, one folder and one commit per app, each tagged with an `AI-Assisted: copilot` trailer (the raw output files in `results/` show `copilot (gpt-5)`, a label I assumed at commit time and later could not verify)
 - **Scans:**
   1. The scanner as shipped (Semgrep `p/security-audit` plus a PyPI check of `requirements.txt`)
   2. Semgrep with a broader combination: `p/security-audit`, `p/python`, `p/flask`, `p/owasp-top-ten`
@@ -55,7 +55,7 @@ A small experiment to see what the scanner finds in real AI-generated code. This
 
 ## Limitations
 
-- One model, 30 prompts, Python only
+- One tool (Copilot with automatic model selection), 30 prompts, Python only. Results can't be attributed to a specific model
 - Semgrep community rules only, no paid rules or cross-file analysis
 - Hand review covered apps 03 and 20 to 24 in full. The other apps were checked only by Semgrep and a keyword search, so "missed by Semgrep" counts are a lower bound
 - The apps were never run, so functional bugs went unmeasured
