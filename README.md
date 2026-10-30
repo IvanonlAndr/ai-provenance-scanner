@@ -124,9 +124,9 @@ Being upfront about what this does **not** do:
 - **Trust depends on the trailer.** If a developer doesn't tag a commit, it isn't scanned. This tool tracks declared provenance; it can't catch untagged AI code.
 - **File-level, not line-level.** It scans every file in an AI-tagged commit, including lines a human wrote.
 - **Python/PyPI only.** Dependency checks cover `requirements.txt`. No npm, Go, or lockfile support yet.
-- **Semgrep is not a full security review.** It catches known patterns and misses plenty.
+- **Semgrep is not a full security review.** It catches known patterns and misses plenty. In [my 30-app experiment](RESULTS.md), the default ruleset flagged only false positives and missed the riskiest app.
 - **The age check is a heuristic.** New packages can be legitimate, and old ones can be hijacked.
-- - **Reads the working tree, not each commit.** Files are scanned as they exist in your current checkout, so a file renamed or deleted later in the same branch is skipped silently.
+- **Reads the working tree, not each commit.** Files are scanned as they exist in your current checkout, so a file renamed or deleted later in the same branch is skipped silently.
 
 ## Roadmap
 
